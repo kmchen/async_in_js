@@ -8,7 +8,7 @@ composedCall({some: 'args'}, (err, result) => {
   }
 });
 
-function composedCall (args, cb) {
+function composedCall (args, callback) {
 
   let channel = {
     fns: [], 
@@ -23,11 +23,10 @@ function composedCall (args, cb) {
     end: function() {
       this.process--;
       if(this.process == 0) {
-        let a = _.reduce(this.fns, function(slice, item) {
+        console.log(_.reduce(this.fns, function(slice, item) {
           slice.push(item.data);
           return slice;
-        }, []);
-        console.log(a);
+        }, []));
       }
     },
     push(obj) {
@@ -43,11 +42,12 @@ function composedCall (args, cb) {
   channel.Add(call3, args, handlingError());
 
  function handlingError() {
-  return (err, data, cb) => {
+  return (err, data, chan) => {
     if(err) {
-      cb(err);
+      callback(err);
+    } else {
+      chan(data).end();
     }
-      cb(data).end();
   }; 
  }
 };
